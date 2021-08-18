@@ -3,6 +3,18 @@ from pandas_ods_reader import read_ods
 from tqdm import tqdm
 
 
+### Change the data_dir variable to relevant directory ###
+data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
+###
+
+### ensure file names are not changed from dft downloads
+jt_dataframes = [
+    "jts0501", "jts0502", "jts0503", "jts0504", "jts0505",
+    "jts0506", "jts0507", "jts0508", "jts0509"
+]
+###
+
+
 def load_and_clean_jt_ods_data(filename ,data_dir):
     """
     Function to read DfT accessibility ods files and convert to Pandas DataFrame
@@ -34,18 +46,6 @@ def load_and_clean_jt_ods_data(filename ,data_dir):
     data.reset_index(drop=True, inplace=True)
 
     return data
-
-
-### Change the data_dir variable to relevant directory ###
-data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
-###
-
-### ensure file names are not changed from dft downloads
-jt_dataframes = [
-    "jts0501", "jts0502", "jts0503", "jts0504", "jts0505",
-    "jts0506", "jts0507", "jts0508", "jts0509"
-]
-###
 
 # load and clean each ods dataframe and merge together
 jt_data_joined = None

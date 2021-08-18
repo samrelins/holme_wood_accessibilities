@@ -1,6 +1,12 @@
 import os
 import pandas as pd
 
+### Change the DATA_DIR variable to relevant directory ###
+DATA_DIR = '/Users/samrelins/Documents/LIDA/transport_proj/data'
+###
+### Either name data "jt_data_joined.csv or change JT_CSV_NAME ###
+JT_CSV_NAME = "jt_data_joined.csv"
+###
 def build_accessibility_table(lsoas=None):
     """
     function to return accessibility statistics given LSOA codes
@@ -10,13 +16,7 @@ def build_accessibility_table(lsoas=None):
     """
 
     # load journey time data as outputted from clean_and_merge_jt_data.py
-
-    ### Change the data_dir variable to relevant directory ###
-    data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
-    ###
-    ### Either name data "jt_data_joined.csv or change the below ###
-    jt_path = os.path.join(data_dir, "jt_data_joined.csv")
-    ###
+    jt_path = os.path.join(DATA_DIR, JT_CSV_NAME)
     full_jt_data = pd.read_csv(jt_path, low_memory=False)
 
     # read in lsoa(s) and adjust to list if only an individual value
