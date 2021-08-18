@@ -2,11 +2,24 @@ import os
 import pandas as pd
 
 def build_accessibility_table(lsoas=None):
+    """
+    function to return accessibility statistics given LSOA codes
 
+    :param lsoas: (string / list / none) Required LSOA codes
+    :return: (DataFrame) Dataframe of accessibility stats for requested LSOA(s)
+    """
+
+    # load journey time data as outputted from clean_and_merge_jt_data.py
+
+    ### Change the data_dir variable to relevant directory ###
     data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
+    ###
+    ### Either name data "jt_data_joined.csv or change the below ###
     jt_path = os.path.join(data_dir, "jt_data_joined.csv")
+    ###
     full_jt_data = pd.read_csv(jt_path, low_memory=False)
 
+    # read in lsoa(s) and adjust to list if only an individual value
     if lsoas is not None:
         if not type(lsoas) == list:
             lsoas = [lsoas]
@@ -15,6 +28,7 @@ def build_accessibility_table(lsoas=None):
     else:
         lsoas_jt_data = full_jt_data
 
+    # dictionaries storing variable names from dft dataframes
     service_names = {
         "100Emp": "Employment Sites - Small",
         "500Emp": "Employment Sites - Medium",
@@ -42,21 +56,23 @@ def build_accessibility_table(lsoas=None):
         "30pct": ("Destination Accessibility", "% Service Users Within 30 min"),
     }
 
+    # create list of name tuples for dataframe MultiIndex
     index_tuples = [(service, mode)
                     for service in service_names.values()
                     for mode in mode_names.values()]
-
     index = pd.MultiIndex.from_tuples(index_tuples, names=("Service", "Mode"))
 
+    # Create a list of the required variable names
     variable_names = [service + mode + observation
                       for service in service_names.keys()
                       for mode in mode_names.keys()
                       for observation in observation_names.keys()]
 
+    # Extract required variables from dft data
     mean_values = (lsoas_jt_data[variable_names]
                    .mean().values
                    .reshape(30, 5).T)
-
     data = dict(zip(observation_names.values(), mean_values))
 
+    # convert data to dataframe and return
     return pd.DataFrame(data, index=index)
