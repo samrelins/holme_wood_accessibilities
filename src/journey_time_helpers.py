@@ -5,7 +5,7 @@ def build_accessibility_table(lsoas=None):
 
     data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
     jt_path = os.path.join(data_dir, "jt_data_joined.csv")
-    full_jt_data = pd.read_csv(jt_path)
+    full_jt_data = pd.read_csv(jt_path, low_memory=False)
 
     if lsoas is not None:
         if not type(lsoas) == list:
