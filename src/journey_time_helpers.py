@@ -1,14 +1,19 @@
 import os
 import pandas as pd
 
-def build_accessibility_table(lsoas):
+def build_accessibility_table(lsoas=None):
 
     data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
     jt_path = os.path.join(data_dir, "jt_data_joined.csv")
     full_jt_data = pd.read_csv(jt_path)
 
-    in_specified_lsoas = full_jt_data.LSOA_code.isin(lsoas)
-    lsoas_jt_data = full_jt_data[in_specified_lsoas]
+    if lsoas is not None:
+        if not type(lsoas) == list:
+            lsoas = [lsoas]
+        in_specified_lsoas = full_jt_data.LSOA_code.isin(lsoas)
+        lsoas_jt_data = full_jt_data[in_specified_lsoas]
+    else:
+        lsoas_jt_data = full_jt_data
 
     service_names = {
         "100Emp": "Employment Sites - Small",
