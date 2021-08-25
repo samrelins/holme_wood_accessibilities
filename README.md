@@ -6,9 +6,7 @@ Source files and outputs from the Holme Wood Accessibilities project. The releva
 
 ### src/clean_and_merge_jt.py:
 
-Script that takes the DfT Journey Times ODS files as stored on the gov.uk portal and converts into one merged `.csv` file with all the relevant accessibility statistics. 
-
-To use: ammend the `data_dir` varaible to reflect the directory in which the relevant ODS files have been downloaded and then run. Ensure the ODS files are not renamed from the default names given on the gov.uk portal. The output will be stored in the same `data_dir` as `jt_data_joined.csv`
+Script that downloads and merges DFT journey times data, adds IMD2019 stats and stores as CSV file. Specify the directory where you want the final csv saving using the `data_dir` variable. Other than installing the required python packages and updating the `data_dir` variable, the script should run without any other input. Should the DFT / government change the links to the original ods / xlsx files, this will obviously break the script. 
 
 ### src/accessibility_helpers.py
 
