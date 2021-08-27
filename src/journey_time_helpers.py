@@ -38,8 +38,6 @@ def build_accessibility_table(lsoas, agg_method=None):
     if agg_method == "pct90":
         agg_method = pct90
 
-    print(agg_method)
-
     in_specified_lsoas = full_jt_data.LSOA_code.isin(lsoas)
     lsoas_jt_data = full_jt_data[in_specified_lsoas]
 
@@ -94,3 +92,37 @@ def build_accessibility_table(lsoas, agg_method=None):
 
     # convert data to dataframe and return
     return pd.DataFrame(dataframe_dict, index=index)
+
+
+def compare_destination_features(
+        lsoas_1, lsoas_2, service, observation, group_names, title=""
+):
+    columns = [service + transport_mode + observation
+               for transport_mode in [ "PT", "Cyc", "Car"]]
+
+    group_1 = full_jt_data.LSOA_code.isin(lsoas_1)
+    group_1_data = full_jt_data[group_1][columns]
+    group_1_data["location"] = group_names[0]
+
+    group_2 = full_jt_data.LSOA_code.isin(lsoas_2)
+    group_2_data = full_jt_data[group_2][columns]
+    group_2_data["location"] = group_names[1]
+
+    joined_data = group_1_data.append(group_2_data)
+
+    y_axis_names = {
+        "t": "Time (min)",
+        "15n": "n Services",
+        "30n": "n Services",
+        "15pct": "Percent",
+        "30pct": "Percent"
+    }
+    joined_data.columns = [ "Public Transport", "Cycle", "Car", "location"]
+    plot = px.box(
+        joined_data,
+        color="location",
+        labels=dict(variable="Mode of Transport",
+                    value=y_axis_names[observation])
+    )
+    plot.update_layout(title=dict(text=title, x=0.5))
+    return plot
