@@ -133,4 +133,5 @@ def compare_destination_features(
              + ": "
              + OBSERVATION_NAMES[observation][1])
     plot.update_layout(title=dict(text=title, x=0.5))
-    return plot
+    image = plot.to_image(format="jpg", scale=2)
+    return image
