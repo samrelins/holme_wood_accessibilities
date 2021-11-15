@@ -29,7 +29,8 @@ SERVICE_NAMES = {
 MODE_NAMES = {
     "PT": "Public Transport / Walk",
     "Cyc": "Cycle",
-    "Car": "Car"
+    "Car": "Car",
+    "Walk": "Walk"
 }
 
 OBSERVATION_NAMES = {
@@ -91,22 +92,25 @@ def build_accessibility_table(lsoas, agg_method=None):
         table_data = table_data.agg(agg_method).values
     else:
         table_data = table_data.values
-    table_data = table_data.reshape(30, 5).T
+    table_data = table_data.reshape(40, 5).T
     dataframe_dict = dict(zip(OBSERVATION_NAMES.values(), table_data))
 
     # convert data to dataframe and return
     return pd.DataFrame(dataframe_dict, index=index)
 
 
-def compare_destination_features(
-        lsoa_groups, group_names, service, observation):
+def compare_destination_features(lsoa_groups, group_names, service,
+                                 observation):
+
     columns = [service + transport_mode + observation
-               for transport_mode in [ "PT", "Cyc", "Car"]]
+               for transport_mode in ["PT", "Cyc", "Car", "Walk"]]
 
     joined_data = None
     for lsoa_group, group_name in zip(lsoa_groups, group_names):
         is_in_group = FULL_JT_DATA.LSOA_code.isin(lsoa_group)
         group_data = FULL_JT_DATA[is_in_group][columns]
+
+        group_name += f" (n={len(group_data)})"
         group_data["location"] = group_name
 
         if joined_data is None:
@@ -121,7 +125,8 @@ def compare_destination_features(
         "15pct": "Percent",
         "30pct": "Percent"
     }
-    joined_data.columns = [ "Public Transport", "Cycle", "Car", "location"]
+    joined_data.columns = ["Public Transport", "Cycle", "Car", "Walk",
+                           "location"]
     plot = px.box(
         joined_data,
         color="location",

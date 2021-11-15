@@ -86,8 +86,10 @@ for jts_dataf_path in tqdm(jts_dataf_paths):
         jt_data_joined = df
     else:
         drop_cols = ['Region', 'LA_Code', 'LA_Name']
-        jt_data_joined = jt_data_joined.merge(df.drop(drop_cols, axis=1),
-                                              on="LSOA_code")
+        jt_data_joined = jt_data_joined.merge(
+            df.drop(drop_cols, axis=1),
+            on="LSOA_code"
+        )
 print("Done!")
 
 print("Adding IMD stats...")
