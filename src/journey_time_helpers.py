@@ -35,8 +35,8 @@ MODE_NAMES = {
 
 OBSERVATION_NAMES = {
     "t": ("", "Journey Time (min)"),
-    "15n": ("Origin Accessibility", "n Services Within 15 min"),
-    "30n": ("Origin Accessibility", "n Services Within 30 min"),
+    "15n": ("Origin Accessibility", "Services Within 15 min"),
+    "30n": ("Origin Accessibility", "Services Within 30 min"),
     "15pct": ("Destination Accessibility", "% Service Users Within 15 min"),
     "30pct": ("Destination Accessibility", "% Service Users Within 30 min"),
 }
@@ -103,7 +103,7 @@ def compare_destination_features(lsoa_groups, group_names, service,
                                  observation):
 
     columns = [service + transport_mode + observation
-               for transport_mode in ["PT", "Cyc", "Car", "Walk"]]
+               for transport_mode in MODE_NAMES.keys()]
 
     joined_data = None
     for lsoa_group, group_name in zip(lsoa_groups, group_names):
@@ -125,8 +125,7 @@ def compare_destination_features(lsoa_groups, group_names, service,
         "15pct": "Percent",
         "30pct": "Percent"
     }
-    joined_data.columns = ["Public Transport", "Cycle", "Car", "Walk",
-                           "location"]
+    joined_data.columns = list(MODE_NAMES.values()) + ["location"]
     plot = px.box(
         joined_data,
         color="location",
