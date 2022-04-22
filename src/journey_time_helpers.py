@@ -116,7 +116,7 @@ def compare_destination_features(lsoa_groups, group_names, service,
         if joined_data is None:
             joined_data = group_data
         else:
-            joined_data = joined_data.append(group_data)
+            joined_data = pd.concat([joined_data, group_data])
 
     y_axis_names = {
         "t": "Time (min)",
