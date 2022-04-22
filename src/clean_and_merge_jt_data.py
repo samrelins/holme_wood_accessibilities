@@ -6,37 +6,30 @@ from tqdm import tqdm
 
 
 ### Change the data_dir variable to relevant directory ###
-data_dir = '/Users/samrelins/Documents/LIDA/transport_proj/data'
+data_dir = '/Users/samrelins/Documents/BIHR/transport_proj/data'
 ###
 
 
 def load_and_clean_jt_ods_data(data_loc):
     """
-    Function to read DfT accessibility ods files and convert to Pandas DataFrame
-    :param filename: (string) name of DfT file to convert
-    :param data_dir: (string) location of directory containing DfT files
+    Function to read & clean DfT accessibility ods files, and convert to Pandas DataFrame
+    :param data_loc: (string) location of DfT .ods file
     :return:
     """
 
-    # load ods dataframe
     data = read_ods(data_loc, 2)
+    colnames_mask = data.iloc[:,0] == "LSOA_code"
+    if colnames_mask.sum() != 1:
+        raise ValueError("Can't find column names")
+    data.columns = data[colnames_mask].values[0]
 
-    # find row containing variable names - varies between different files
-    names_row_idx = 0
-    for row_idx in range(10):
-        if data.iloc[row_idx].values[0] == "LSOA_code":
-            names_row_idx = row_idx
-            break
-
-    # check if variable names found
-    if names_row_idx == 0:
-        raise ValueError("Can't find variable names row")
-    else:
-        colnames = data.iloc[names_row_idx].values
-
-    # set column names and remove non-data rows at top of ods file
-    data = data.iloc[names_row_idx+1:,:]
-    data.columns = colnames
+    find_non_junk_cols = lambda x: x[:2] == "E0" if type(x) == str else False
+    non_junk_cols_mask = data.LSOA_code.apply(find_non_junk_cols)
+    if non_junk_cols_mask.sum() < len(data) - 100:
+        raise ValueError(
+            "Deleting too many columns from table - something went wrong"
+        )
+    data = data[non_junk_cols_mask]
     data.reset_index(drop=True, inplace=True)
 
     return data
@@ -95,13 +88,14 @@ print("Done!")
 print("Adding IMD stats...")
 
 imd_url = "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/833970/File_1_-_IMD2019_Index_of_Multiple_Deprivation.xlsx"
+
 imd_filename = imd_url.split("/")[-1]
 imd_path = os.path.join(temp_data_dir_path, imd_filename)
 download_and_save_file(imd_url, imd_path)
 
 imd_data = pd.read_excel(imd_path, sheet_name="IMD2019")
-imd_data = imd_data.iloc[:,[0,4,5]]
-imd_data.columns = ["LSOA_code", "imd_rank", "imd_decile"]
+imd_data = imd_data.iloc[:,[0,1,4,5]]
+imd_data.columns = ["LSOA_code", "LSOA_name", "imd_rank", "imd_decile"]
 
 jt_data_joined = jt_data_joined.merge(imd_data, on="LSOA_code")
 

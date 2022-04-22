@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 ### Change the DATA_DIR variable to relevant directory ###
-DATA_DIR = '/Users/samrelins/Documents/LIDA/transport_proj/data'
+DATA_DIR = '/Users/samrelins/Documents/BIHR/transport_proj/data'
 ###
 ### Either name data "jt_data_joined.csv or change JT_CSV_NAME ###
 JT_CSV_NAME = "jt_data_joined.csv"
@@ -54,7 +54,7 @@ def build_accessibility_table(lsoas, agg_method=None):
 
     # read in lsoa(s) and adjust to list if only an individual value
     if type(lsoas) == list:
-        if agg_method is None:
+        if len(lsoas) != 1 and agg_method is None:
             raise ValueError("Must specify agg_method for multiple LSOAs")
     else:
         lsoas = [lsoas]
